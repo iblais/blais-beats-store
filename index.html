@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blais Beats Store</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Starfield Background -->
+    <div class="starfield" id="starfield"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <button class="nav-toggle" style="display: none;">☰</button>
+            <div class="nav-center">
+                <div class="nav-links">
+                    <a href="#beats" class="nav-link active">BEATS STORE</a>
+                    <a href="#services" class="nav-link">SOUND KITS</a>
+                    <a href="#services" class="nav-link">MIXING/MASTERING</a>
+                    <a href="#services" class="nav-link">AI MUSIC VIDEOS</a>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="cart-container" onclick="toggleCartDropdown()">
+                    <div class="cart-icon">🛒</div>
+                    <div class="cart-count">0</div>
+                    <!-- Cart Dropdown -->
+                    <div class="cart-dropdown" id="cart-dropdown">
+                        <div class="cart-dropdown-header">
+                            <h3>Your Cart</h3>
+                        </div>
+                        <div class="cart-dropdown-items" id="cart-dropdown-items">
+                            <div class="cart-empty">Your cart is empty</div>
+                        </div>
+                        <div class="cart-dropdown-footer">
+                            <div class="cart-total" id="cart-total">Total: $0.00</div>
+                            <button class="checkout-btn" onclick="proceedToCheckout()">CHECKOUT</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Logo Section -->
+    <section class="logo-section">
+        <div class="logo-container">
+            <img src="/Users/ernestblais/Dropbox/0 Business 2024/Blais Beats Store/Assets/Top Logo Image@1.5x.png" alt="Blais Beats Store" class="logo-image">
+        </div>
+    </section>
+
+    <!-- Main Beat Store Section -->
+    <section id="beats" class="beat-store-section">
+        <div class="beat-store-container">
+            <!-- Beat Store Interface -->
+            <div class="beat-store-interface">
+                <!-- Beat Store Header -->
+                <div class="beat-store-header">
+                    <div class="search-container">
+                        <div class="search-input-wrapper">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" id="search-input" placeholder="Search beats..." class="search-input">
+                        </div>
+                        <button class="cart-button" onclick="toggleCartDropdown()">
+                            <span class="cart-icon">🛒</span>
+                            <span class="cart-text"><span id="cart-count">0</span> BEATS</span>
+                        </button>
+                    </div>
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-genre="All">All</button>
+                        <button class="filter-tab" data-genre="Hip Hop">Hip Hop</button>
+                        <button class="filter-tab" data-genre="Trap">Trap</button>
+                        <button class="filter-tab" data-genre="R&B">R&B</button>
+                        <button class="filter-tab" data-genre="Boom Bap">Boom Bap</button>
+                    </div>
+                </div>
+
+                <!-- Player and Tracklist Layout -->
+                <div class="player-tracklist-layout">
+                    <!-- Left: Windows 95 Media Player -->
+                    <div class="player-left">
+                        <div class="win95-window">
+                            <!-- Title Bar -->
+                            <div class="win95-titlebar">
+                                <span>BLAIS Beat Player</span>
+                                <div class="win95-controls">
+                                    <button class="win95-btn">_</button>
+                                    <button class="win95-btn">□</button>
+                                    <button class="win95-btn">×</button>
+                                </div>
+                            </div>
+                            <!-- Player Content -->
+                            <div class="win95-content">
+                                <!-- Visualization Area -->
+                                <div class="win95-visualization">
+                                    <canvas id="win95-visualizer" width="600" height="150"></canvas>
+                                </div>
+                                <!-- Controls -->
+                                <div class="win95-player-controls">
+                                    <div class="win95-transport">
+                                        <button class="win95-button" id="win95-prev">⏮</button>
+                                        <button class="win95-button" id="win95-play">▶</button>
+                                        <button class="win95-button" id="win95-next">⏭</button>
+                                        <button class="win95-button" id="win95-repeat">⇄</button>
+                                    </div>
+                                    <!-- Progress Bar -->
+                                    <div class="win95-progress-container">
+                                        <span class="win95-time" id="win95-current-time">0:00</span>
+                                        <div class="win95-slider">
+                                            <div class="win95-progress" id="win95-progress"></div>
+                                        </div>
+                                        <span class="win95-time" id="win95-total-time">0:00</span>
+                                    </div>
+                                    <!-- Volume Control -->
+                                    <div class="win95-volume-container">
+                                        <span class="win95-volume-label">Volume:</span>
+                                        <div class="win95-slider">
+                                            <div class="win95-volume-fill"></div>
+                                            <input type="range" min="0" max="100" value="75" class="win95-volume-input">
+                                        </div>
+                                        <span class="win95-volume-value">75%</span>
+                                    </div>
+                                    <!-- Track Info -->
+                                    <div class="win95-track-info" id="win95-track-info">
+                                        <div><strong>Track:</strong> <span id="win95-track-title">Select a beat</span></div>
+                                        <div><strong>Artist:</strong> BLAIS | <strong>BPM:</strong> <span id="win95-track-bpm">--</span> | <strong>Price:</strong> $<span id="win95-track-price">--</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Tracklist -->
+                    <div class="player-right">
+                        <div class="tracklist-section">
+                            <div class="tracklist-header">
+                                <div class="track-col">#</div>
+                                <div class="track-col">TITLE</div>
+                                <div class="track-col">BPM</div>
+                                <div class="track-col">TIME</div>
+                                <div class="track-col">PRICE</div>
+                                <div class="track-col">ACTION</div>
+                            </div>
+                            <div class="tracklist-body" id="tracklist-body">
+                                <!-- Tracks will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="about-container">
+            <div class="about-content">
+                <div class="about-text">
+                    <h2 class="about-title">About BLAIS</h2>
+                    <div class="about-description">
+                        <p>Blais is a Billboard-charting producer and mixing engineer with a career rooted in hip hop's legendary sound. His production credits include two full-length albums for Bizzy Bone of Bone Thugs-n-Harmony: Carbon Monoxide and The Mantra.</p>
+                        <p>Over the years, Blais has worked with some of the most respected names in rap and R&B, including Bone Thugs-n-Harmony, Do Or Die, Devin The Dude, and Snow Tha Product.</p>
+                        <p>Beyond production, Blais has built a career as a skilled mixing engineer, shaping records with clarity and punch. His approach keeps vocals sharp, drums heavy, and melodies wide.</p>
+                        <p>With a background that spans studio sessions, live production, and collaborations with both major-label artists and independent talent, Blais continues to push forward, delivering beats and mixes that stand the test of time.</p>
+                    </div>
+                    <button class="about-button">READ MORE</button>
+                </div>
+                <div class="about-image">
+                    <img src="/Users/ernestblais/Dropbox/0 Business 2024/Blais Beats Store/Assets/blais-portrait.png" alt="BLAIS Portrait" class="portrait-image">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="features-container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">👆</div>
+                    <h2 class="feature-number">01</h2>
+                    <h3 class="feature-title">Select Beats</h3>
+                    <p class="feature-description">Browse our premium collection of retrofuturistic beats and find the perfect sound for your project.</p>
+                </div>
+                <div class="feature-card featured">
+                    <div class="feature-corners">
+                        <div class="corner corner-tl"></div>
+                        <div class="corner corner-tr"></div>
+                        <div class="corner corner-bl"></div>
+                        <div class="corner corner-br"></div>
+                    </div>
+                    <div class="feature-icon">🛒</div>
+                    <h2 class="feature-number">02</h2>
+                    <h3 class="feature-title">Checkout</h3>
+                    <p class="feature-description">Secure payment processing with instant delivery. Choose from multiple licensing options.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📥</div>
+                    <h2 class="feature-number">03</h2>
+                    <h3 class="feature-title">Download</h3>
+                    <p class="feature-description">Instant access to high-quality WAV and MP3 files with stems and project files included.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services-section">
+        <div class="services-container">
+            <div class="services-header">
+                <h2 class="services-title">Services</h2>
+                <p class="services-subtitle">Our Expertise</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <h3 class="service-title">Beat Production</h3>
+                    <p class="service-description">Custom beat production tailored to your artistic vision. From concept to completion, we bring your musical ideas to life with cutting-edge sound design.</p>
+                </div>
+                <div class="service-card">
+                    <h3 class="service-title">Audio Mixing</h3>
+                    <p class="service-description">Professional mixing services that enhance your tracks with pristine clarity, perfect balance, and that signature BLAIS polish that makes your music stand out.</p>
+                </div>
+                <div class="service-card">
+                    <h3 class="service-title">Sound Design</h3>
+                    <p class="service-description">Innovative sound design and synthesis that pushes the boundaries of conventional audio. Create unique sonic landscapes that define your artistic identity.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Licensing Section -->
+    <section class="licensing-section">
+        <div class="licensing-container">
+            <div class="licensing-header">
+                <h2 class="licensing-title">Licensing</h2>
+                <p class="licensing-subtitle">Choose the perfect license for your creative project. All licenses include commercial rights and instant delivery.</p>
+            </div>
+            <div class="licensing-grid">
+                <div class="license-card">
+                    <div class="license-header">
+                        <h4 class="license-type">Streaming Lease License</h4>
+                        <p class="license-description">WAV, MP3</p>
+                        <div class="license-price"><span class="currency">$</span>39.99</div>
+                    </div>
+                    <div class="license-features">
+                        <div class="license-feature">✓ Used for Music Recording</div>
+                        <div class="license-feature">✓ Distribute up to LIMITED copies</div>
+                        <div class="license-feature">✓ Limited Online Audio Streams</div>
+                        <div class="license-feature">✓ Basic Music Video rights</div>
+                        <div class="license-feature">✓ Non-Exclusive Rights</div>
+                    </div>
+                </div>
+                <div class="license-card">
+                    <div class="license-header">
+                        <h4 class="license-type">Unlimited Wav Master License</h4>
+                        <p class="license-description">Buy 1 Get 1 Free</p>
+                        <div class="license-price"><span class="currency">$</span>79.99</div>
+                    </div>
+                    <div class="license-features">
+                        <div class="license-feature">✓ WAV, MP3 formats</div>
+                        <div class="license-feature">✓ Used for Music Recording</div>
+                        <div class="license-feature">✓ Distribute up to UNLIMITED copies</div>
+                        <div class="license-feature">✓ UNLIMITED Online Audio Streams</div>
+                        <div class="license-feature">✓ Enhanced Music Video rights</div>
+                    </div>
+                </div>
+                <div class="license-card">
+                    <div class="license-header">
+                        <h4 class="license-type">Unlimited Plus</h4>
+                        <p class="license-description">Buy 1 Get 4 Free</p>
+                        <div class="license-price"><span class="currency">$</span>99.99</div>
+                    </div>
+                    <div class="license-features">
+                        <div class="license-feature">✓ WAV, STEMS, MP3 formats</div>
+                        <div class="license-feature">✓ Used for Music Recording</div>
+                        <div class="license-feature">✓ Distribute up to UNLIMITED copies</div>
+                        <div class="license-feature">✓ UNLIMITED Online Audio Streams</div>
+                        <div class="license-feature">✓ UNLIMITED Music Video rights</div>
+                    </div>
+                </div>
+                <div class="license-card featured">
+                    <div class="license-corners">
+                        <div class="corner corner-tl"></div>
+                        <div class="corner corner-tr"></div>
+                        <div class="corner corner-bl"></div>
+                        <div class="corner corner-br"></div>
+                    </div>
+                    <div class="license-header">
+                        <h4 class="license-type">Unlimited + 100% Publishing + Lifetime</h4>
+                        <p class="license-description"></p>
+                        <div class="license-price">Make an Offer</div>
+                    </div>
+                    <div class="license-features">
+                        <div class="license-feature">✓ WAV, STEMS, MP3 formats</div>
+                        <div class="license-feature">✓ Used for Music Recording</div>
+                        <div class="license-feature">✓ Distribute up to UNLIMITED copies</div>
+                        <div class="license-feature">✓ UNLIMITED Online Audio Streams</div>
+                        <div class="license-feature">✓ UNLIMITED Music Video</div>
+                        <div class="license-feature">✓ For Profit Live Performances</div>
+                        <div class="license-feature">✓ Radio Broadcasting rights (UNLIMITED Stations)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <h2 class="footer-title">BLAIS</h2>
+            <div class="footer-subtitle">PREMIUM BEATS & SOUND KITS</div>
+            <div class="footer-copyright">© 2024 BLAIS • All Rights Reserved</div>
+        </div>
+    </footer>
+
+
+
+    <script src="script.js"></script>
+</body>
+</html>
