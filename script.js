@@ -12,18 +12,19 @@ const firebaseConfig = {
 // Initialize Firebase when page loads
 let firebaseBeatStore;
 
-// Initialize Firebase after DOM loads
+// Initialize after DOM loads
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+    // Load beats from localStorage first (admin panel)
+    loadBeatsFromLocalStorage();
 
-    // Initialize our beat store manager
-    firebaseBeatStore = new FirebaseBeatStore();
-
-    console.log('🔥 Firebase initialized for Blais Beats Store');
-
-    // Load beats from Firebase
-    loadBeatsFromFirebase();
+    // If no local beats, try Firebase fallback
+    if (beatCatalog.length === 0) {
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebaseBeatStore = new FirebaseBeatStore();
+        console.log('🔥 Firebase initialized for Blais Beats Store');
+        loadBeatsFromFirebase();
+    }
 });
 
 // Beat Data Structure - Updated for new design
@@ -432,16 +433,19 @@ function updateTracklist() {
 
     tracklistBody.innerHTML = filteredBeats.map((beat, index) => `
         <div class="track-item ${currentBeat && currentBeat.id === beat.id && isPlaying ? 'playing' : ''}"
-             data-beat-id="${beat.id}" onclick="playBeat(${beat.id})">
+             data-beat-id="${beat.id}" onclick="${beat.beatstarsEmbed ? 'playBeatStarsEmbed(' + beat.id + ')' : 'playBeat(' + beat.id + ')'}">
             <div class="track-num">${String(index + 1).padStart(2, '0')}</div>
-            <div class="track-title">${beat.title}</div>
+            <div class="track-title">
+                ${beat.title}
+                ${beat.beatstarsEmbed ? '<span style="color: #00FFFF; font-size: 10px;">⚡ BEATSTARS</span>' : ''}
+            </div>
             <div class="track-bpm">${beat.bpm}</div>
-            <div class="track-time">${beat.duration}</div>
+            <div class="track-time">${beat.duration || '3:30'}</div>
             <div class="track-price">$${beat.price}</div>
             <div class="track-action">
                 <button class="add-btn ${isInCart(beat.id) ? 'added' : ''}"
-                        onclick="event.stopPropagation(); addToCart(${beat.id})">
-                    ${isInCart(beat.id) ? 'ADDED' : 'ADD'}
+                        onclick="event.stopPropagation(); ${beat.beatstarsEmbed ? 'openBeatStarsPurchase(' + beat.id + ')' : 'addToCart(' + beat.id + ')'}">
+                    ${beat.beatstarsEmbed ? 'BUY' : (isInCart(beat.id) ? 'ADDED' : 'ADD')}
                 </button>
             </div>
         </div>
@@ -882,6 +886,26 @@ document.addEventListener('click', function(e) {
     }
 });
 
+// Load beats from localStorage (admin panel data)
+function loadBeatsFromLocalStorage() {
+    try {
+        const stored = localStorage.getItem('beatCatalog');
+        if (stored) {
+            const localBeats = JSON.parse(stored);
+            if (localBeats && localBeats.length > 0) {
+                beatCatalog.length = 0;
+                beatCatalog.push(...localBeats);
+                console.log(`✅ Loaded ${localBeats.length} beats from localStorage`);
+                updateTracklist();
+                return true;
+            }
+        }
+    } catch (error) {
+        console.error('❌ Error loading beats from localStorage:', error);
+    }
+    return false;
+}
+
 // Firebase helper functions
 async function loadBeatsFromFirebase() {
     try {
@@ -927,5 +951,113 @@ async function uploadBeatToFirebase(beatData, files) {
     }
 }
 
+// BeatStars Integration Functions
+function playBeatStarsEmbed(beatId) {
+    const beat = beatCatalog.find(b => b.id === beatId);
+    if (!beat || !beat.beatstarsEmbed) {
+        console.log('No BeatStars embed found for this beat');
+        return;
+    }
+
+    // Update current beat
+    currentBeat = beat;
+    updateTrackInfo(beat);
+
+    // Clear the visualizer area and show BeatStars player with Windows 95 styling
+    const visualizer = document.getElementById('win95-visualizer');
+    if (visualizer) {
+        const container = visualizer.parentElement;
+        container.innerHTML = `
+            <div class="beatstars-player-container">
+                <div class="beatstars-frame">
+                    <div class="beatstars-titlebar">
+                        <span>🎵 BeatStars Player - ${beat.title}</span>
+                        <div class="beatstars-controls">
+                            <button class="win95-btn">_</button>
+                            <button class="win95-btn">□</button>
+                            <button class="win95-btn" onclick="resetToVisualizer()">×</button>
+                        </div>
+                    </div>
+                    <div class="beatstars-content">
+                        ${beat.beatstarsEmbed}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Update tracklist to show playing state
+    updateTracklist();
+}
+
+function openBeatStarsPurchase(beatId) {
+    const beat = beatCatalog.find(b => b.id === beatId);
+    if (!beat || !beat.beatstarsEmbed) {
+        alert('BeatStars purchase link not available for this beat');
+        return;
+    }
+
+    // Extract BeatStars URL from embed code if possible
+    const embedCode = beat.beatstarsEmbed;
+    const urlMatch = embedCode.match(/src="([^"]+)"/);
+    if (urlMatch) {
+        const embedUrl = urlMatch[1];
+        // Convert embed URL to direct BeatStars page URL
+        const beatstarsUrl = embedUrl.replace('/embed/', '/').replace('/player/', '/');
+        window.open(beatstarsUrl, '_blank');
+    } else {
+        alert('Unable to open BeatStars purchase page. Please contact support.');
+    }
+}
+
+// Update track info to support BeatStars beats
+function updateTrackInfo(beat) {
+    document.getElementById('win95-track-title').textContent = beat.title;
+    document.getElementById('win95-track-bpm').textContent = beat.bpm;
+    document.getElementById('win95-track-price').textContent = beat.price;
+}
+
+// Reset visualizer from BeatStars player
+function resetToVisualizer() {
+    const visualizer = document.getElementById('win95-visualizer');
+    if (visualizer) {
+        const container = visualizer.parentElement;
+        container.innerHTML = `<canvas id="win95-visualizer" width="600" height="150"></canvas>`;
+        // Reinitialize visualizer if needed
+        initializeVisualizer();
+    }
+}
+
+// Global BeatStars player function (for store-wide player)
+function loadGlobalBeatStarsPlayer() {
+    const storeId = "151238"; // Your BeatStars store ID
+    const visualizer = document.getElementById('win95-visualizer');
+    if (visualizer) {
+        const container = visualizer.parentElement;
+        container.innerHTML = `
+            <div class="beatstars-player-container">
+                <div class="beatstars-frame">
+                    <div class="beatstars-titlebar">
+                        <span>🎵 BLAIS BEATS - BeatStars Store</span>
+                        <div class="beatstars-controls">
+                            <button class="win95-btn">_</button>
+                            <button class="win95-btn">□</button>
+                            <button class="win95-btn" onclick="resetToVisualizer()">×</button>
+                        </div>
+                    </div>
+                    <div class="beatstars-content">
+                        <iframe src="https://player.beatstars.com/?storeId=${storeId}"
+                                width="100%"
+                                height="400"
+                                style="border: none; border-radius: 4px;"
+                                frameborder="0">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
+
 // Console log for debugging
-console.log('Beat Store Script Loaded - New Design Version');
+console.log('Beat Store Script Loaded - New Design Version with BeatStars Support');
