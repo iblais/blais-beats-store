@@ -1,12 +1,12 @@
-// Firebase Configuration - Replace with your config from Firebase Console
+// Firebase Configuration
 const firebaseConfig = {
-    // Get these from https://console.firebase.google.com
-    apiKey: "your-api-key-here",
-    authDomain: "your-project.firebaseapp.com",
-    projectId: "your-project-id",
-    storageBucket: "your-project.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "your-app-id"
+    apiKey: "AIzaSyAfMYFvW7NbsFGPFAOiE6O2lljdaLGfhfA",
+    authDomain: "prometheai-1me5o.firebaseapp.com",
+    projectId: "prometheai-1me5o",
+    storageBucket: "prometheai-1me5o.firebasestorage.app",
+    messagingSenderId: "427862967088",
+    appId: "1:427862967088:web:777de6c6b2ac5393763ef5",
+    measurementId: "G-3J491JX7NP"
 };
 
 // Initialize Firebase when page loads

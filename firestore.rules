@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Beats are readable by everyone, writable only by authenticated users
+    match /beats/{beatId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Orders are only accessible by the customer who created them
+    match /orders/{orderId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Users can read/write their own profile
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
