@@ -29,6 +29,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // BeatStars iframe will load directly - no sync needed
 });
 
+// Mobile Navigation Toggle
+function toggleMobileMenu() {
+    const navCenter = document.querySelector('.nav-center');
+    if (navCenter) {
+        navCenter.classList.toggle('open');
+    }
+}
+
 // Beat Data Structure - Updated for new design
 const beatCatalog = [
     { id: 1, title: "Autumn Vibes", artist: "BLAIS", bpm: 140, duration: "3:48", genre: "Hip Hop", tags: ["dark", "melodic", "trap"], price: 39.99 },

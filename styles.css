@@ -60,7 +60,7 @@ body {
 .main-nav {
     background: #C55968;
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
     padding: 6px 0;
     position: fixed;
@@ -74,21 +74,32 @@ body {
 .nav-container {
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
     width: 100%;
     max-width: none;
     margin: 0;
     height: auto;
+    padding: 0 20px;
 }
 
-.nav-left,
-.nav-center,
+.nav-left {
+    display: none; /* Hidden on desktop */
+}
+
+.nav-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
 .nav-right {
-    display: contents;
+    display: flex;
+    align-items: center;
 }
 
 .nav-links {
-    display: contents;
+    display: flex;
+    gap: 20px;
 }
 
 .nav-link {
@@ -1246,40 +1257,63 @@ body {
 
 /* Mobile Responsive Design */
 @media (max-width: 768px) {
-    /* Mobile Navigation with Dropdown */
+    /* Mobile Navigation - Clean Rewrite */
     .main-nav {
-        padding: 8px 0;
+        padding: 10px 0;
+        height: auto;
     }
 
     .nav-container {
-        flex-direction: column;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
         position: relative;
     }
 
-    .nav-links {
+    /* Show hamburger menu on left */
+    .nav-left {
+        display: block !important;
+    }
+
+    .nav-toggle {
+        display: block !important;
+        background: none;
+        border: none;
+        color: #000000;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    /* Hide nav links by default on mobile */
+    .nav-center {
         display: none;
         position: absolute;
         top: 100%;
         left: 0;
         right: 0;
-        background: #C55968;
-        flex-direction: column;
-        padding: 16px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        z-index: 1001;
     }
 
-    .nav-links.open {
-        display: flex;
-    }
-
-    .nav-toggle {
+    /* Show nav links when open */
+    .nav-center.open {
         display: block;
-        background: none;
-        border: none;
-        color: #000000;
-        font-size: 18px;
-        cursor: pointer;
-        padding: 8px;
+    }
+
+    .nav-center .nav-links {
+        display: flex;
+        flex-direction: column;
+        background: #C55968;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        gap: 0;
+    }
+
+    /* Keep cart on right */
+    .nav-right {
+        display: flex;
+        align-items: center;
     }
 
     .nav-link {
