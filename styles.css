@@ -321,10 +321,11 @@ body {
 
 /* Beat Store Section */
 .beat-store-section {
-    padding: 0;
+    padding: 20px 0;
     background: rgba(6, 2, 2, 0.95);
     position: relative;
-    min-height: 95vh;
+    min-height: 100vh;
+    overflow: visible;
 }
 
 .beat-store-section::before {
@@ -452,10 +453,12 @@ body {
 
 /* Full Size BeatStars Player */
 .fullsize-beatstars-player {
-    width: 100%;
-    height: 90vh;
-    min-height: 800px;
-    padding: 10px;
+    width: 90%;
+    max-width: 1000px;
+    height: 95vh;
+    min-height: 900px;
+    margin: 0 auto;
+    padding: 20px;
     background: rgba(2, 2, 2, 0.98);
 }
 
@@ -465,6 +468,8 @@ body {
     border: none;
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 255, 255, 0.3);
+    pointer-events: auto;
+    overflow: auto;
 }
 
 .player-left {
@@ -1317,27 +1322,36 @@ body {
 
     /* Mobile BeatStars player */
     .fullsize-beatstars-player {
-        height: 85vh;
-        min-height: 600px;
-        padding: 5px;
+        width: 95%;
+        height: 90vh;
+        min-height: 700px;
+        padding: 10px;
     }
 
     .fullsize-beatstars-player iframe {
         height: 100%;
         border-radius: 4px;
+        pointer-events: auto;
+        touch-action: auto;
     }
 
     .beat-store-section {
-        min-height: 90vh;
-        padding: 0;
+        min-height: 100vh;
+        padding: 10px 0;
+        overflow: visible;
     }
 
     /* Additional mobile optimizations for better track visibility */
     @media (max-width: 480px) {
         .fullsize-beatstars-player {
-            height: 80vh;
-            min-height: 500px;
-            padding: 2px;
+            width: 98%;
+            height: 85vh;
+            min-height: 600px;
+            padding: 5px;
+        }
+
+        .fullsize-beatstars-player iframe {
+            touch-action: manipulation;
         }
     }
 
