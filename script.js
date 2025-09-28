@@ -5,8 +5,8 @@ const firebaseConfig = {
     projectId: "prometheai-1me5o",
     storageBucket: "prometheai-1me5o.firebasestorage.app",
     messagingSenderId: "427862967088",
-    appId: "1:427862967088:web:777de6c6b2ac5393763ef5",
-    measurementId: "G-3J491JX7NP"
+    appId: "1:427862967088:web:15a969e2421461e0763ef5",
+    measurementId: "G-ZB706MHMW7"
 };
 
 // Initialize Firebase when page loads
