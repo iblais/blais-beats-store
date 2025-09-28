@@ -433,7 +433,7 @@ function updateTracklist() {
 
     tracklistBody.innerHTML = filteredBeats.map((beat, index) => `
         <div class="track-item ${currentBeat && currentBeat.id === beat.id && isPlaying ? 'playing' : ''}"
-             data-beat-id="${beat.id}" onclick="${beat.beatstarsEmbed ? 'playBeatStarsEmbed(' + beat.id + ')' : 'playBeat(' + beat.id + ')'}">
+             data-beat-id="${beat.id}" onclick="selectBeat(${beat.id})">
             <div class="track-num">${String(index + 1).padStart(2, '0')}</div>
             <div class="track-title">
                 ${beat.title}
@@ -1010,6 +1010,37 @@ function openBeatStarsPurchase(beatId) {
     }
 }
 
+// Unified function to select and play beats
+function selectBeat(beatId) {
+    const beat = beatCatalog.find(b => b.id === beatId);
+    if (!beat) return;
+
+    // Update current beat
+    currentBeat = beat;
+    updateTrackInfo(beat);
+
+    // If beat has BeatStars embed, update the BeatStars player
+    if (beat.beatstarsEmbed) {
+        // Update BeatStars player with specific beat embed
+        const beatstarsIframe = document.getElementById('beatstars-iframe');
+        if (beatstarsIframe) {
+            // Extract src from embed code
+            const srcMatch = beat.beatstarsEmbed.match(/src="([^"]+)"/);
+            if (srcMatch) {
+                beatstarsIframe.src = srcMatch[1];
+            }
+        }
+        // Also trigger the Windows player visualization for consistency
+        playBeat(beatId);
+    } else {
+        // Regular beat - use standard player
+        playBeat(beatId);
+    }
+
+    // Update tracklist display
+    updateTracklist();
+}
+
 // Update track info to support BeatStars beats
 function updateTrackInfo(beat) {
     document.getElementById('win95-track-title').textContent = beat.title;
@@ -1028,35 +1059,18 @@ function resetToVisualizer() {
     }
 }
 
-// Global BeatStars player function (for store-wide player)
+// Reset BeatStars player to store view
 function loadGlobalBeatStarsPlayer() {
     const storeId = "151238"; // Your BeatStars store ID
-    const visualizer = document.getElementById('win95-visualizer');
-    if (visualizer) {
-        const container = visualizer.parentElement;
-        container.innerHTML = `
-            <div class="beatstars-player-container">
-                <div class="beatstars-frame">
-                    <div class="beatstars-titlebar">
-                        <span>🎵 BLAIS BEATS - BeatStars Store</span>
-                        <div class="beatstars-controls">
-                            <button class="win95-btn">_</button>
-                            <button class="win95-btn">□</button>
-                            <button class="win95-btn" onclick="resetToVisualizer()">×</button>
-                        </div>
-                    </div>
-                    <div class="beatstars-content">
-                        <iframe src="https://player.beatstars.com/?storeId=${storeId}"
-                                width="100%"
-                                height="400"
-                                style="border: none; border-radius: 4px;"
-                                frameborder="0">
-                        </iframe>
-                    </div>
-                </div>
-            </div>
-        `;
+    const beatstarsIframe = document.getElementById('beatstars-iframe');
+    if (beatstarsIframe) {
+        beatstarsIframe.src = `https://player.beatstars.com/?storeId=${storeId}`;
     }
+
+    // Update track info to show store view
+    document.getElementById('win95-track-title').textContent = 'BeatStars Store';
+    document.getElementById('win95-track-bpm').textContent = 'All';
+    document.getElementById('win95-track-price').textContent = 'Various';
 }
 
 // Console log for debugging
