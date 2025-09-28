@@ -486,13 +486,27 @@ body {
     position: relative;
 }
 
+.beatstars-player-content::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    height: 200px;
+    background: #000000;
+    z-index: 10;
+    border-radius: 4px 4px 0 0;
+}
+
 .beatstars-player-content iframe {
     width: 100%;
-    height: calc(100% + 80px);
+    height: calc(100% + 200px);
     border: none;
     border-radius: 4px;
-    margin-top: -80px;
+    margin-top: -200px;
     position: relative;
+    filter: invert(1) hue-rotate(180deg) saturate(0.8) brightness(0.8);
+    mix-blend-mode: difference;
 }
 
 .win95-titlebar {
@@ -1802,8 +1816,12 @@ body {
     }
 
     .beatstars-player-content iframe {
-        height: calc(300px + 80px);
-        margin-top: -60px;
+        height: calc(300px + 200px);
+        margin-top: -200px;
+    }
+
+    .beatstars-player-content::before {
+        height: 200px;
     }
 
     .beatstars-titlebar {
