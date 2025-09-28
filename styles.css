@@ -449,60 +449,21 @@ body {
     color: #000000;
 }
 
-/* Enlarged Player Layout */
-.enlarged-player-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(2, 2, 2, 0.98);
-    padding: 20px;
-    min-height: 80vh;
-}
-
-.enlarged-win95-window {
-    background: #C0C0C0;
-    border: 2px outset #C0C0C0;
-    font-family: 'MS Sans Serif', sans-serif;
-    width: 95%;
+/* Direct BeatStars Player */
+.direct-beatstars-player {
+    width: 100%;
     max-width: 1200px;
-    height: 700px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+    margin: 0 auto;
+    padding: 20px;
+    background: rgba(2, 2, 2, 0.98);
 }
 
-.enlarged-win95-content {
-    flex: 1;
-    background: #008080;
-    margin: 4px;
-    padding: 0;
-    position: relative;
-    overflow: hidden;
-}
-
-.embedded-beatstars-container {
+.direct-beatstars-player iframe {
     width: 100%;
-    height: 100%;
-    position: relative;
-}
-
-.embedded-beatstars-container iframe {
-    width: 100%;
-    height: 100%;
+    height: 800px;
     border: none;
-}
-
-.win95-controls-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(192, 192, 192, 0.95);
-    border-top: 1px solid #808080;
-    padding: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 255, 255, 0.3);
 }
 
 .player-left {
@@ -1353,24 +1314,13 @@ body {
         flex-shrink: 0;
     }
 
-    /* Mobile player layout */
-    .enlarged-player-container {
+    /* Mobile BeatStars player */
+    .direct-beatstars-player {
         padding: 10px;
-        min-height: 60vh;
     }
 
-    .enlarged-win95-window {
-        width: 100%;
-        height: 500px;
-    }
-
-    .win95-controls-overlay {
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .win95-transport {
-        justify-content: center;
+    .direct-beatstars-player iframe {
+        height: 600px;
     }
 
     /* Windows 95 player mobile */

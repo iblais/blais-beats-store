@@ -54,53 +54,16 @@
 
     <!-- Main Beat Store Section -->
     <section id="beats" class="beat-store-section">
-        <div class="beat-store-container">
-            <!-- Beat Store Interface -->
-            <div class="beat-store-interface">
-
-                <!-- Enlarged Windows 95 Media Player with Embedded BeatStars -->
-                <div class="enlarged-player-container">
-                    <div class="enlarged-win95-window">
-                        <!-- Title Bar -->
-                        <div class="win95-titlebar">
-                            <span>🎵 BLAIS BEATS - BeatStars Player</span>
-                            <div class="win95-controls">
-                                <button class="win95-btn">_</button>
-                                <button class="win95-btn">□</button>
-                                <button class="win95-btn">×</button>
-                            </div>
-                        </div>
-                        <!-- Player Content -->
-                        <div class="enlarged-win95-content">
-                            <!-- Embedded BeatStars Player -->
-                            <div class="embedded-beatstars-container">
-                                <iframe id="beatstars-iframe"
-                                        src="https://player.beatstars.com/?storeId=151238"
-                                        width="100%"
-                                        height="100%"
-                                        style="border: none; border-radius: 4px;"
-                                        frameborder="0">
-                                </iframe>
-                            </div>
-                            <!-- Windows 95 Style Controls Overlay -->
-                            <div class="win95-controls-overlay">
-                                <div class="win95-transport">
-                                    <button class="win95-button" id="win95-prev">⏮</button>
-                                    <button class="win95-button" id="win95-play">▶</button>
-                                    <button class="win95-button" id="win95-next">⏭</button>
-                                    <button class="win95-button" id="win95-repeat">⇄</button>
-                                    <button class="win95-button" onclick="loadGlobalBeatStarsPlayer()" title="Refresh BeatStars Store">🔄</button>
-                                </div>
-                                <!-- Track Info -->
-                                <div class="win95-track-info" id="win95-track-info">
-                                    <div><strong>Store:</strong> <span id="win95-track-title">BeatStars Player</span></div>
-                                    <div><strong>Status:</strong> Ready to play</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- Direct BeatStars Player -->
+        <div class="direct-beatstars-player">
+            <iframe id="beatstars-iframe"
+                    src="https://player.beatstars.com/?storeId=151238"
+                    width="100%"
+                    height="800"
+                    style="border: none;"
+                    frameborder="0"
+                    allow="autoplay; encrypted-media">
+            </iframe>
         </div>
     </section>
 

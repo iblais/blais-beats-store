@@ -26,10 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
         loadBeatsFromFirebase();
     }
 
-    // Initialize BeatStars sync after a short delay to ensure iframe is loaded
-    setTimeout(() => {
-        setupBeatStarsSync();
-    }, 1000);
+    // BeatStars iframe will load directly - no sync needed
 });
 
 // Beat Data Structure - Updated for new design
@@ -1042,148 +1039,13 @@ function resetToVisualizer() {
     }
 }
 
-// Reset BeatStars player to store view
+// Simple BeatStars player refresh function
 function loadGlobalBeatStarsPlayer() {
     const storeId = "151238"; // Your BeatStars store ID
     const beatstarsIframe = document.getElementById('beatstars-iframe');
     if (beatstarsIframe) {
         beatstarsIframe.src = `https://player.beatstars.com/?storeId=${storeId}`;
-    }
-
-    // Update track info to show store view
-    const trackTitle = document.getElementById('win95-track-title');
-    if (trackTitle) {
-        trackTitle.textContent = 'BeatStars Store Refreshed';
-    }
-}
-
-// Track current BeatStars track index
-let currentBeatStarsTrack = 0;
-let beatStarsTrackList = [];
-
-// Sync Windows 95 player controls with BeatStars player
-function setupBeatStarsSync() {
-    const win95Play = document.getElementById('win95-play');
-    const win95Prev = document.getElementById('win95-prev');
-    const win95Next = document.getElementById('win95-next');
-    const beatstarsIframe = document.getElementById('beatstars-iframe');
-
-    // Try to detect when BeatStars iframe loads and extract track info
-    if (beatstarsIframe) {
-        beatstarsIframe.addEventListener('load', function() {
-            console.log('BeatStars iframe loaded');
-            // Try to access iframe content (will be blocked by CORS but worth trying)
-            try {
-                const iframeDoc = beatstarsIframe.contentDocument;
-                if (iframeDoc) {
-                    extractBeatStarsTrackList(iframeDoc);
-                }
-            } catch (e) {
-                console.log('Cannot access iframe content due to CORS policy');
-                // Fallback: Use your local beat catalog
-                beatStarsTrackList = beatCatalog.slice();
-            }
-        });
-    }
-
-    if (win95Play) {
-        win95Play.addEventListener('click', function(e) {
-            e.preventDefault();
-
-            // Simulate clicking the first play button in BeatStars
-            try {
-                // Focus the iframe to ensure it receives the simulated events
-                beatstarsIframe.focus();
-
-                // Try to trigger keyboard space bar press (play/pause in most players)
-                beatstarsIframe.contentWindow.focus();
-
-                // Send a space key event to the iframe
-                const spaceEvent = new KeyboardEvent('keydown', {
-                    key: ' ',
-                    code: 'Space',
-                    keyCode: 32,
-                    which: 32,
-                    bubbles: true
-                });
-
-                beatstarsIframe.contentDocument.dispatchEvent(spaceEvent);
-            } catch (e) {
-                console.log('Cannot control iframe due to CORS policy');
-            }
-
-            // Update button state for visual feedback
-            if (isPlaying) {
-                this.textContent = '▶';
-                isPlaying = false;
-            } else {
-                this.textContent = '⏸';
-                isPlaying = true;
-            }
-        });
-    }
-
-    if (win95Prev) {
-        win95Prev.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (currentBeatStarsTrack > 0) {
-                currentBeatStarsTrack--;
-                selectBeatStarsTrack(currentBeatStarsTrack);
-            }
-        });
-    }
-
-    if (win95Next) {
-        win95Next.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (currentBeatStarsTrack < beatStarsTrackList.length - 1) {
-                currentBeatStarsTrack++;
-                selectBeatStarsTrack(currentBeatStarsTrack);
-            }
-        });
-    }
-}
-
-// Try to extract track list from BeatStars iframe
-function extractBeatStarsTrackList(iframeDoc) {
-    try {
-        // Look for track elements in the BeatStars player
-        const tracks = iframeDoc.querySelectorAll('[data-track], .track-item, .song-item');
-        beatStarsTrackList = Array.from(tracks).map((track, index) => ({
-            id: index,
-            title: track.textContent || `Track ${index + 1}`,
-            element: track
-        }));
-        console.log('Extracted', beatStarsTrackList.length, 'tracks from BeatStars');
-    } catch (e) {
-        console.log('Could not extract track list:', e);
-        // Use local catalog as fallback
-        beatStarsTrackList = beatCatalog.slice();
-    }
-}
-
-// Select a specific track in BeatStars
-function selectBeatStarsTrack(trackIndex) {
-    const beatstarsIframe = document.getElementById('beatstars-iframe');
-
-    if (trackIndex >= 0 && trackIndex < beatStarsTrackList.length) {
-        const track = beatStarsTrackList[trackIndex];
-
-        // Update Windows player display
-        if (track.title) {
-            document.getElementById('win95-track-title').textContent = track.title;
-        }
-
-        // Try to click the track in BeatStars
-        try {
-            if (track.element) {
-                track.element.click();
-            }
-        } catch (e) {
-            console.log('Cannot click track due to CORS policy');
-        }
-
-        currentBeatStarsTrack = trackIndex;
+        console.log('BeatStars player refreshed');
     }
 }
 
