@@ -333,6 +333,8 @@ body {
     position: absolute;
     inset: 0;
     background: linear-gradient(45deg, transparent 0%, rgba(0, 255, 255, 0.02) 25%, transparent 50%, rgba(255, 0, 255, 0.02) 75%, transparent 100%);
+    pointer-events: none;
+    z-index: -1;
 }
 
 .beat-store-container {
@@ -460,6 +462,8 @@ body {
     margin: 0 auto;
     padding: 20px;
     background: rgba(2, 2, 2, 0.98);
+    position: relative;
+    z-index: 10;
 }
 
 .fullsize-beatstars-player iframe {
@@ -468,8 +472,6 @@ body {
     border: none;
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 255, 255, 0.3);
-    pointer-events: auto;
-    overflow: auto;
 }
 
 .player-left {
@@ -1331,8 +1333,6 @@ body {
     .fullsize-beatstars-player iframe {
         height: 100%;
         border-radius: 4px;
-        pointer-events: auto;
-        touch-action: auto;
     }
 
     .beat-store-section {
@@ -1351,7 +1351,7 @@ body {
         }
 
         .fullsize-beatstars-player iframe {
-            touch-action: manipulation;
+            border-radius: 4px;
         }
     }
 
