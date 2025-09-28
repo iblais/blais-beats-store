@@ -1047,13 +1047,14 @@ function loadGlobalBeatStarsPlayer() {
     const storeId = "151238"; // Your BeatStars store ID
     const beatstarsIframe = document.getElementById('beatstars-iframe');
     if (beatstarsIframe) {
-        beatstarsIframe.src = `https://player.beatstars.com/?storeId=${storeId}&hidePlayer=true`;
+        beatstarsIframe.src = `https://player.beatstars.com/?storeId=${storeId}`;
     }
 
     // Update track info to show store view
-    document.getElementById('win95-track-title').textContent = 'BeatStars Store';
-    document.getElementById('win95-track-bpm').textContent = 'All';
-    document.getElementById('win95-track-price').textContent = 'Various';
+    const trackTitle = document.getElementById('win95-track-title');
+    if (trackTitle) {
+        trackTitle.textContent = 'BeatStars Store Refreshed';
+    }
 }
 
 // Track current BeatStars track index
