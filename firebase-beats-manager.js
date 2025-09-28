@@ -3,9 +3,6 @@
 
 class FirebaseBeatStore {
     constructor() {
-        this.db = window.firebaseDb;
-        this.storage = window.firebaseStorage;
-        this.auth = window.firebaseAuth;
         this.beatCatalog = [];
     }
 
@@ -16,24 +13,41 @@ class FirebaseBeatStore {
         const uploadPromises = [];
         const fileUrls = {};
 
+        // Generate beat ID if not provided
+        if (!beatData.id) {
+            beatData.id = this.generateBeatId(beatData.title || 'untitled-beat');
+        }
+
         // Upload each file type
         for (const [fileType, file] of Object.entries(files)) {
             if (file) {
-                const storageRef = window.firebase.storage().ref();
+                console.log(`Uploading ${fileType}: ${file.name}`);
+
+                const storageRef = firebase.storage().ref();
                 const fileRef = storageRef.child(`beats/${beatData.id}/${fileType}/${file.name}`);
 
                 uploadPromises.push(
                     fileRef.put(file).then(async (snapshot) => {
                         const downloadUrl = await snapshot.ref.getDownloadURL();
-                        fileUrls[fileType] = downloadUrl;
+                        fileUrls[fileType + '_url'] = downloadUrl;
                         console.log(`✅ Uploaded ${fileType}: ${file.name}`);
+                        return downloadUrl;
+                    }).catch(error => {
+                        console.error(`❌ Error uploading ${fileType}:`, error);
+                        throw error;
                     })
                 );
             }
         }
 
-        await Promise.all(uploadPromises);
-        return fileUrls;
+        try {
+            await Promise.all(uploadPromises);
+            console.log('✅ All files uploaded successfully');
+            return fileUrls;
+        } catch (error) {
+            console.error('❌ Upload failed:', error);
+            throw error;
+        }
     }
 
     // Add beat to Firestore database
@@ -42,13 +56,15 @@ class FirebaseBeatStore {
             const beat = {
                 ...beatData,
                 ...fileUrls,
-                createdAt: new Date(),
+                createdAt: firebase.firestore.Timestamp.now(),
                 status: 'active',
                 downloads: 0,
                 tags: beatData.tags || []
             };
 
-            const docRef = await window.firebase.firestore()
+            console.log('Adding beat to Firestore:', beat);
+
+            const docRef = await firebase.firestore()
                 .collection('beats')
                 .add(beat);
 
@@ -63,7 +79,7 @@ class FirebaseBeatStore {
     // Get all beats from database
     async loadBeats() {
         try {
-            const snapshot = await window.firebase.firestore()
+            const snapshot = await firebase.firestore()
                 .collection('beats')
                 .where('status', '==', 'active')
                 .orderBy('createdAt', 'desc')
