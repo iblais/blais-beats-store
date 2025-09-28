@@ -452,7 +452,7 @@ body {
 /* Player and Tracklist Layout */
 .player-tracklist-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 20px;
     background: rgba(2, 2, 2, 0.98);
     padding: 16px;
@@ -463,10 +463,6 @@ body {
 }
 
 .player-center {
-    min-width: 0;
-}
-
-.player-right {
     min-width: 0;
 }
 
@@ -1299,8 +1295,7 @@ body {
     }
 
     .player-left,
-    .player-center,
-    .player-right {
+    .player-center {
         flex: none;
     }
 

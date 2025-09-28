@@ -426,30 +426,8 @@ function initializeTracklist() {
 }
 
 function updateTracklist() {
-    const tracklistBody = document.getElementById('tracklist-body');
-    if (!tracklistBody) return;
-
-    const filteredBeats = getFilteredBeats();
-
-    tracklistBody.innerHTML = filteredBeats.map((beat, index) => `
-        <div class="track-item ${currentBeat && currentBeat.id === beat.id && isPlaying ? 'playing' : ''}"
-             data-beat-id="${beat.id}" onclick="selectBeat(${beat.id})">
-            <div class="track-num">${String(index + 1).padStart(2, '0')}</div>
-            <div class="track-title">
-                ${beat.title}
-                ${beat.beatstarsEmbed ? '<span style="color: #00FFFF; font-size: 10px;">⚡ BEATSTARS</span>' : ''}
-            </div>
-            <div class="track-bpm">${beat.bpm}</div>
-            <div class="track-time">${beat.duration || '3:30'}</div>
-            <div class="track-price">$${beat.price}</div>
-            <div class="track-action">
-                <button class="add-btn ${isInCart(beat.id) ? 'added' : ''}"
-                        onclick="event.stopPropagation(); ${beat.beatstarsEmbed ? 'openBeatStarsPurchase(' + beat.id + ')' : 'addToCart(' + beat.id + ')'}">
-                    ${beat.beatstarsEmbed ? 'BUY' : (isInCart(beat.id) ? 'ADDED' : 'ADD')}
-                </button>
-            </div>
-        </div>
-    `).join('');
+    // Tracklist has been removed - this function now just updates visual state
+    console.log('Tracklist update called - tracklist container removed');
 }
 
 function getFilteredBeats() {
