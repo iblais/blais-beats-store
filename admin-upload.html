@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blais Beats - Admin Upload</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #0ff;
+        }
+        .upload-form {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #0ff;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 14px;
+        }
+        .form-group input[type="file"] {
+            background: #222;
+            border: 2px dashed #555;
+            padding: 20px;
+            text-align: center;
+        }
+        .file-upload-area {
+            background: #222;
+            border: 2px dashed #555;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+        .file-upload-area:hover {
+            border-color: #0ff;
+            background: #333;
+        }
+        .file-upload-area.dragover {
+            border-color: #0ff;
+            background: #333;
+            transform: scale(1.02);
+        }
+        .upload-btn {
+            background: #0ff;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        .upload-btn:hover {
+            background: #00cc99;
+            transform: translateY(-2px);
+        }
+        .upload-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        .status.success { background: rgba(0, 255, 0, 0.2); border: 1px solid #0f0; }
+        .status.error { background: rgba(255, 0, 0, 0.2); border: 1px solid #f00; }
+        .status.info { background: rgba(0, 255, 255, 0.2); border: 1px solid #0ff; }
+        .preview-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        .file-preview {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #333;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+        .file-icon {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        .file-info {
+            flex: 1;
+        }
+        .file-size {
+            color: #ccc;
+            font-size: 12px;
+        }
+        .back-link {
+            display: inline-block;
+            color: #0ff;
+            text-decoration: none;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            border: 1px solid #0ff;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .back-link:hover {
+            background: #0ff;
+            color: #000;
+        }
+    </style>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Store</a>
+
+        <div class="header">
+            <h1>🎵 BLAIS BEATS ADMIN</h1>
+            <p>Upload beats to Firebase Storage & Database</p>
+        </div>
+
+        <div class="upload-form">
+            <h2>📤 Upload New Beat</h2>
+
+            <div class="form-group">
+                <label>Beat Title</label>
+                <input type="text" id="beat-title" placeholder="e.g., Midnight Vibes" required>
+            </div>
+
+            <div class="form-group">
+                <label>BPM</label>
+                <input type="number" id="beat-bpm" placeholder="140" min="60" max="200">
+            </div>
+
+            <div class="form-group">
+                <label>Key Signature</label>
+                <select id="beat-key">
+                    <option value="">Select Key</option>
+                    <option value="C Major">C Major</option>
+                    <option value="C Minor">C Minor</option>
+                    <option value="G Major">G Major</option>
+                    <option value="G Minor">G Minor</option>
+                    <option value="D Major">D Major</option>
+                    <option value="D Minor">D Minor</option>
+                    <option value="A Major">A Major</option>
+                    <option value="A Minor">A Minor</option>
+                    <option value="E Major">E Major</option>
+                    <option value="E Minor">E Minor</option>
+                    <option value="F Major">F Major</option>
+                    <option value="F Minor">F Minor</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Genre</label>
+                <select id="beat-genre">
+                    <option value="Hip Hop">Hip Hop</option>
+                    <option value="Trap">Trap</option>
+                    <option value="R&B">R&B</option>
+                    <option value="Boom Bap">Boom Bap</option>
+                    <option value="Drill">Drill</option>
+                    <option value="Melodic">Melodic</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Price ($)</label>
+                <input type="number" id="beat-price" value="39.99" step="0.01" min="0">
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="beat-description" rows="3" placeholder="Describe this beat..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>WAV File (Full Beat)</label>
+                <div class="file-upload-area" data-file-type="wav">
+                    <input type="file" id="wav-file" accept=".wav" style="display: none;">
+                    <div>🎵 Click or drag WAV file here</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>MP3 Preview</label>
+                <div class="file-upload-area" data-file-type="mp3">
+                    <input type="file" id="mp3-file" accept=".mp3" style="display: none;">
+                    <div>🎧 Click or drag MP3 preview here</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Stems (ZIP)</label>
+                <div class="file-upload-area" data-file-type="stems">
+                    <input type="file" id="stems-file" accept=".zip" style="display: none;">
+                    <div>📦 Click or drag stems ZIP here</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Artwork</label>
+                <div class="file-upload-area" data-file-type="artwork">
+                    <input type="file" id="artwork-file" accept=".jpg,.jpeg,.png" style="display: none;">
+                    <div>🖼️ Click or drag artwork here</div>
+                </div>
+            </div>
+
+            <button class="upload-btn" onclick="uploadBeat()">
+                🚀 Upload Beat to Firebase
+            </button>
+        </div>
+
+        <div id="status"></div>
+
+        <div class="preview-section">
+            <h3>📋 File Preview</h3>
+            <div id="file-preview">
+                <p style="color: #666;">Select files to see preview...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="firebase-beats-manager.js"></script>
+    <script>
+        // Firebase config (same as main store)
+        const firebaseConfig = {
+            apiKey: "your-api-key-here",
+            authDomain: "your-project.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "your-app-id"
+        };
+
+        let firebaseBeatStore;
+
+        // Initialize Firebase
+        document.addEventListener('DOMContentLoaded', function() {
+            firebase.initializeApp(firebaseConfig);
+            firebaseBeatStore = new FirebaseBeatStore();
+            setupFileUploads();
+        });
+
+        function setupFileUploads() {
+            const uploadAreas = document.querySelectorAll('.file-upload-area');
+
+            uploadAreas.forEach(area => {
+                const fileType = area.dataset.fileType;
+                const input = document.getElementById(`${fileType}-file`);
+
+                // Click to select file
+                area.addEventListener('click', () => input.click());
+
+                // Drag and drop
+                area.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    area.classList.add('dragover');
+                });
+
+                area.addEventListener('dragleave', () => {
+                    area.classList.remove('dragover');
+                });
+
+                area.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    area.classList.remove('dragover');
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        input.files = files;
+                        updateFilePreview();
+                    }
+                });
+
+                // File selection
+                input.addEventListener('change', updateFilePreview);
+            });
+        }
+
+        function updateFilePreview() {
+            const preview = document.getElementById('file-preview');
+            const files = {
+                wav: document.getElementById('wav-file').files[0],
+                mp3: document.getElementById('mp3-file').files[0],
+                stems: document.getElementById('stems-file').files[0],
+                artwork: document.getElementById('artwork-file').files[0]
+            };
+
+            let html = '';
+            for (const [type, file] of Object.entries(files)) {
+                if (file) {
+                    const icon = getFileIcon(type);
+                    const size = formatFileSize(file.size);
+                    html += `
+                        <div class="file-preview">
+                            <div class="file-icon">${icon}</div>
+                            <div class="file-info">
+                                <div><strong>${file.name}</strong></div>
+                                <div class="file-size">${size} • ${type.toUpperCase()}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            preview.innerHTML = html || '<p style="color: #666;">No files selected...</p>';
+        }
+
+        function getFileIcon(type) {
+            const icons = {
+                wav: '🎵',
+                mp3: '🎧',
+                stems: '📦',
+                artwork: '🖼️'
+            };
+            return icons[type] || '📄';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.innerHTML = message;
+            status.className = `status ${type}`;
+        }
+
+        async function uploadBeat() {
+            const title = document.getElementById('beat-title').value;
+            const bpm = document.getElementById('beat-bpm').value;
+            const key = document.getElementById('beat-key').value;
+            const genre = document.getElementById('beat-genre').value;
+            const price = parseFloat(document.getElementById('beat-price').value);
+            const description = document.getElementById('beat-description').value;
+
+            if (!title) {
+                showStatus('❌ Please enter a beat title', 'error');
+                return;
+            }
+
+            const files = {
+                wav: document.getElementById('wav-file').files[0],
+                mp3: document.getElementById('mp3-file').files[0],
+                stems: document.getElementById('stems-file').files[0],
+                artwork: document.getElementById('artwork-file').files[0]
+            };
+
+            if (!files.wav && !files.mp3) {
+                showStatus('❌ Please select at least a WAV or MP3 file', 'error');
+                return;
+            }
+
+            const beatData = {
+                id: generateBeatId(title),
+                title,
+                bpm: parseInt(bpm) || 140,
+                key: key || 'C Minor',
+                genre,
+                price,
+                description,
+                tags: [genre, 'BLAIS', 'Beat']
+            };
+
+            try {
+                showStatus('🔄 Uploading beat to Firebase...', 'info');
+                const uploadBtn = document.querySelector('.upload-btn');
+                uploadBtn.disabled = true;
+                uploadBtn.textContent = '⏳ Uploading...';
+
+                const result = await firebaseBeatStore.uploadBeatFiles(beatData, files);
+                const addResult = await firebaseBeatStore.addBeat(beatData, result);
+
+                if (addResult.success) {
+                    showStatus(`✅ Beat "${title}" uploaded successfully!`, 'success');
+                    clearForm();
+                } else {
+                    throw new Error(addResult.error);
+                }
+            } catch (error) {
+                showStatus(`❌ Upload failed: ${error.message}`, 'error');
+            } finally {
+                const uploadBtn = document.querySelector('.upload-btn');
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = '🚀 Upload Beat to Firebase';
+            }
+        }
+
+        function generateBeatId(title) {
+            return title.toLowerCase()
+                .replace(/[^a-z0-9]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+        }
+
+        function clearForm() {
+            document.getElementById('beat-title').value = '';
+            document.getElementById('beat-bpm').value = '';
+            document.getElementById('beat-key').value = '';
+            document.getElementById('beat-genre').value = 'Hip Hop';
+            document.getElementById('beat-price').value = '39.99';
+            document.getElementById('beat-description').value = '';
+
+            ['wav', 'mp3', 'stems', 'artwork'].forEach(type => {
+                document.getElementById(`${type}-file`).value = '';
+            });
+
+            updateFilePreview();
+        }
+    </script>
+</body>
+</html>

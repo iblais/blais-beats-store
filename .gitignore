@@ -1,0 +1,34 @@
+# Ignore development files
+*.sql
+*_test.html
+*debug*.html
+*test*.html
+bulk_import.html
+catalog_importer.html
+dropbox_direct_importer.html
+practical_solution.html
+chunked_upload.html
+simple-store.html
+dropbox-api.js
+dropbox_section.html
+SETUP-INSTRUCTIONS.md
+
+# Ignore system files
+.DS_Store
+.env
+node_modules/
+*.log
+
+# Ignore Supabase folder (using Firebase now)
+supabase/
+
+# Keep only production files
+!index.html
+!script.js
+!styles.css
+!firebase-beats-manager.js
+!firebase-config.js
+!admin-upload.html
+!FIREBASE-SETUP.md
+!README.md
+!Assets/

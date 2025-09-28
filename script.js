@@ -1,3 +1,31 @@
+// Firebase Configuration - Replace with your config from Firebase Console
+const firebaseConfig = {
+    // Get these from https://console.firebase.google.com
+    apiKey: "your-api-key-here",
+    authDomain: "your-project.firebaseapp.com",
+    projectId: "your-project-id",
+    storageBucket: "your-project.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "your-app-id"
+};
+
+// Initialize Firebase when page loads
+let firebaseBeatStore;
+
+// Initialize Firebase after DOM loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Initialize our beat store manager
+    firebaseBeatStore = new FirebaseBeatStore();
+
+    console.log('🔥 Firebase initialized for Blais Beats Store');
+
+    // Load beats from Firebase
+    loadBeatsFromFirebase();
+});
+
 // Beat Data Structure - Updated for new design
 const beatCatalog = [
     { id: 1, title: "Autumn Vibes", artist: "BLAIS", bpm: 140, duration: "3:48", genre: "Hip Hop", tags: ["dark", "melodic", "trap"], price: 39.99 },
@@ -853,6 +881,51 @@ document.addEventListener('click', function(e) {
         }
     }
 });
+
+// Firebase helper functions
+async function loadBeatsFromFirebase() {
+    try {
+        console.log('📥 Loading beats from Firebase...');
+        const beats = await firebaseBeatStore.loadBeats();
+
+        if (beats.length > 0) {
+            // Replace mock data with Firebase data
+            beatCatalog.length = 0;
+            beatCatalog.push(...beats);
+            updateTracklist();
+            console.log(`✅ Loaded ${beats.length} beats from Firebase`);
+        } else {
+            console.log('⚠️ No beats found in Firebase, using mock data');
+        }
+    } catch (error) {
+        console.error('❌ Error loading beats from Firebase:', error);
+        console.log('🔄 Using mock data as fallback');
+    }
+}
+
+// Admin function to upload beat to Firebase
+async function uploadBeatToFirebase(beatData, files) {
+    try {
+        console.log('🔄 Uploading beat to Firebase...');
+
+        // Upload files to Firebase Storage
+        const fileUrls = await firebaseBeatStore.uploadBeatFiles(beatData, files);
+
+        // Add beat to Firestore database
+        const result = await firebaseBeatStore.addBeat(beatData, fileUrls);
+
+        if (result.success) {
+            console.log('✅ Beat uploaded successfully!');
+            await loadBeatsFromFirebase(); // Refresh catalog
+            return result;
+        } else {
+            throw new Error(result.error);
+        }
+    } catch (error) {
+        console.error('❌ Error uploading beat:', error);
+        return { success: false, error: error.message };
+    }
+}
 
 // Console log for debugging
 console.log('Beat Store Script Loaded - New Design Version');
