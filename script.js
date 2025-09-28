@@ -25,6 +25,11 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('🔥 Firebase initialized for Blais Beats Store');
         loadBeatsFromFirebase();
     }
+
+    // Initialize BeatStars sync after a short delay to ensure iframe is loaded
+    setTimeout(() => {
+        setupBeatStarsSync();
+    }, 1000);
 });
 
 // Beat Data Structure - Updated for new design
@@ -1042,13 +1047,73 @@ function loadGlobalBeatStarsPlayer() {
     const storeId = "151238"; // Your BeatStars store ID
     const beatstarsIframe = document.getElementById('beatstars-iframe');
     if (beatstarsIframe) {
-        beatstarsIframe.src = `https://player.beatstars.com/?storeId=${storeId}`;
+        beatstarsIframe.src = `https://player.beatstars.com/?storeId=${storeId}&hidePlayer=true`;
     }
 
     // Update track info to show store view
     document.getElementById('win95-track-title').textContent = 'BeatStars Store';
     document.getElementById('win95-track-bpm').textContent = 'All';
     document.getElementById('win95-track-price').textContent = 'Various';
+}
+
+// Sync Windows 95 player controls with BeatStars player
+function setupBeatStarsSync() {
+    const win95Play = document.getElementById('win95-play');
+    const win95Prev = document.getElementById('win95-prev');
+    const win95Next = document.getElementById('win95-next');
+    const beatstarsIframe = document.getElementById('beatstars-iframe');
+
+    if (win95Play) {
+        win95Play.addEventListener('click', function() {
+            // Send play/pause command to BeatStars iframe
+            if (beatstarsIframe && beatstarsIframe.contentWindow) {
+                try {
+                    beatstarsIframe.contentWindow.postMessage({
+                        action: 'togglePlay'
+                    }, '*');
+                } catch (e) {
+                    console.log('Cross-origin iframe communication blocked');
+                }
+            }
+
+            // Update button state
+            if (isPlaying) {
+                this.textContent = '▶';
+                isPlaying = false;
+            } else {
+                this.textContent = '⏸';
+                isPlaying = true;
+            }
+        });
+    }
+
+    if (win95Prev) {
+        win95Prev.addEventListener('click', function() {
+            if (beatstarsIframe && beatstarsIframe.contentWindow) {
+                try {
+                    beatstarsIframe.contentWindow.postMessage({
+                        action: 'previousTrack'
+                    }, '*');
+                } catch (e) {
+                    console.log('Cross-origin iframe communication blocked');
+                }
+            }
+        });
+    }
+
+    if (win95Next) {
+        win95Next.addEventListener('click', function() {
+            if (beatstarsIframe && beatstarsIframe.contentWindow) {
+                try {
+                    beatstarsIframe.contentWindow.postMessage({
+                        action: 'nextTrack'
+                    }, '*');
+                } catch (e) {
+                    console.log('Cross-origin iframe communication blocked');
+                }
+            }
+        });
+    }
 }
 
 // Console log for debugging
